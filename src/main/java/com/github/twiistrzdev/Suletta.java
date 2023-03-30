@@ -17,6 +17,7 @@
 package com.github.twiistrzdev;
 
 import com.github.twiistrzdev.commands.HelpCommand;
+import com.github.twiistrzdev.commands.SayCommand;
 import com.github.twiistrzdev.database.MySQL;
 import com.github.twiistrzdev.listeners.ReadyListener;
 import com.github.twiistrzdev.listeners.SlashCommandInteractionListener;
@@ -56,14 +57,10 @@ public class Suletta {
         uuidManager = new UUIDManager();
         commandManager = new CommandManager();
 
-        try {
-            mySQL.connect();
-            logger.info("Connected to MySQL Database.");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        commandManager.add(new HelpCommand(this));
+        commandManager.add(
+                new HelpCommand(this),
+                new SayCommand(this)
+        );
 
         DefaultShardManagerBuilder shardManagerBuilder;
         shardManagerBuilder = DefaultShardManagerBuilder.createDefault(dotenv.get("CLIENT_TOKEN"));

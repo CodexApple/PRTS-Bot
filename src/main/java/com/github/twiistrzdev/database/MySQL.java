@@ -37,6 +37,13 @@ public class MySQL {
         name = suletta.getDotenv().get("MYSQL_NAME");
         username = suletta.getDotenv().get("MYSQL_USERNAME");
         password = suletta.getDotenv().get("MYSQL_PASSWORD");
+
+        try {
+            connect();
+            suletta.getLogger().info("Connected to MySQL Database");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public Connection getConnection() {
