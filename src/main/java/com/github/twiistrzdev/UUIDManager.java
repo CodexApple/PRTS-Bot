@@ -18,35 +18,25 @@ package com.github.twiistrzdev;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.HashMap;
+import java.util.UUID;
 
-public class CommandManager {
-    private final List<Command> commands;
+public class UUIDManager {
+    private final HashMap<String, UUID> uuidHashMap;
 
-    public CommandManager() {
-        commands = new ArrayList<>();
+    public UUIDManager() {
+        uuidHashMap = new HashMap<>();
     }
 
-    public void add(@NotNull Command command) {
-        commands.add(command);
+    public void create(@NotNull String key) {
+        put(key, UUID.randomUUID());
     }
 
-    public void add(@NotNull Command... commands) {
-        this.commands.addAll(Arrays.asList(commands));
+    public void put(@NotNull String key, @NotNull UUID uuid) {
+        uuidHashMap.put(key, uuid);
     }
 
-    public List<Command> getAll() {
-        return commands;
-    }
-
-    public Command getByName(String commandName) {
-        for (Command command : commands) {
-            if (command.name().equals(commandName)) {
-                return command;
-            }
-        }
-        return null;
+    public UUID getByKey(@NotNull String key) {
+        return uuidHashMap.get(key);
     }
 }

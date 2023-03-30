@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.github.twiistrzdev;
 
-import com.github.twiistrzdev.commands.CommandHelp;
+import com.github.twiistrzdev.commands.HelpCommand;
 import com.github.twiistrzdev.listeners.ReadyListener;
 import com.github.twiistrzdev.listeners.SlashCommandInteractionListener;
 import io.github.cdimascio.dotenv.Dotenv;
@@ -41,17 +42,20 @@ import javax.annotation.Nonnull;
 public class Suletta {
     private final Dotenv dotenv;
     private final Logger logger;
+    private final UUIDManager uuidManager;
     private final CommandManager commandManager;
     private final ShardManager shardManager;
 
     public Suletta() {
-        DefaultShardManagerBuilder shardManagerBuilder;
+        uuidManager = new UUIDManager();
+        commandManager = new CommandManager();
+
         dotenv = Dotenv.configure().ignoreIfMalformed().ignoreIfMissing().load();
         logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
-        commandManager = new CommandManager();
-        commandManager.add(new CommandHelp());
+        commandManager.add(new HelpCommand(this));
 
+        DefaultShardManagerBuilder shardManagerBuilder;
         shardManagerBuilder = DefaultShardManagerBuilder.createDefault(dotenv.get("CLIENT_TOKEN"));
         shardManagerBuilder.setShardsTotal(-1);
         shardManagerBuilder.setStatus(OnlineStatus.ONLINE);
@@ -100,6 +104,12 @@ public class Suletta {
     @CheckReturnValue
     public Logger getLogger() {
         return logger;
+    }
+
+    @Nonnull
+    @CheckReturnValue
+    public UUIDManager getUuidManager() {
+        return uuidManager;
     }
 
     @Nonnull
