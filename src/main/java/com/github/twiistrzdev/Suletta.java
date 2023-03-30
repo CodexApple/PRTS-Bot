@@ -17,6 +17,7 @@
 package com.github.twiistrzdev;
 
 import com.github.twiistrzdev.commands.HelpCommand;
+import com.github.twiistrzdev.database.MySQL;
 import com.github.twiistrzdev.listeners.ReadyListener;
 import com.github.twiistrzdev.listeners.SlashCommandInteractionListener;
 import io.github.cdimascio.dotenv.Dotenv;
@@ -33,6 +34,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
+import java.sql.SQLException;
 
 /**
  * @author Emmanuel See Te
@@ -42,16 +44,24 @@ import javax.annotation.Nonnull;
 public class Suletta {
     private final Dotenv dotenv;
     private final Logger logger;
+    private final MySQL mySQL;
     private final UUIDManager uuidManager;
     private final CommandManager commandManager;
     private final ShardManager shardManager;
 
     public Suletta() {
+        dotenv = Dotenv.configure().ignoreIfMalformed().ignoreIfMissing().load();
+        logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
+        mySQL = new MySQL(this);
         uuidManager = new UUIDManager();
         commandManager = new CommandManager();
 
-        dotenv = Dotenv.configure().ignoreIfMalformed().ignoreIfMissing().load();
-        logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
+        try {
+            mySQL.connect();
+            logger.info("Connected to MySQL Database.");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
         commandManager.add(new HelpCommand(this));
 
@@ -104,6 +114,12 @@ public class Suletta {
     @CheckReturnValue
     public Logger getLogger() {
         return logger;
+    }
+
+    @Nonnull
+    @CheckReturnValue
+    public MySQL getMySQL() {
+        return mySQL;
     }
 
     @Nonnull
